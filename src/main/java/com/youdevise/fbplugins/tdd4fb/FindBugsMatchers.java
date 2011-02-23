@@ -29,7 +29,7 @@ import com.youdevise.fbplugins.tdd4fb.matchers.BugInstanceTypeMatcher;
 
 import edu.umd.cs.findbugs.BugInstance;
 
-public class BugInstanceMatchers {
+public class FindBugsMatchers {
 
     public static Matcher<BugInstance> hasType(String bugType) {
         return new BugInstanceTypeMatcher(bugType);
