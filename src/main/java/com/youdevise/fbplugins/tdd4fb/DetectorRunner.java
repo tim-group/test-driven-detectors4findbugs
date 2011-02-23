@@ -1,5 +1,5 @@
 /*
- * FindBugs4JUnit. Copyright (c) 2011 youDevise, Ltd.
+ * test-driven-detectors4findbugs. Copyright (c) 2011 youDevise, Ltd.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ import edu.umd.cs.findbugs.classfile.impl.FilesystemCodeBaseLocator;
 
 public class DetectorRunner {
 	
-	private static final String CODEBASE_DIRECTORY = "./src/test/benchmarks/";
+	private static final String CODEBASE_DIRECTORY = ".";
 
     public static void runDetectorOnClass(Detector pluginDetector, Class<?> classToTest, BugReporter bugReporter) throws CheckedAnalysisException, IOException, InterruptedException {
         setUpStaticDependenciesWithinFindBugs(bugReporter);
@@ -87,7 +87,7 @@ public class DetectorRunner {
         IClassPathBuilder builder = classFactory.createClassPathBuilder(bugReporter);
         builder.addCodeBase(codeBaseLocator, true);
         builder.scanNestedArchives(true);
-        IClassPathBuilderProgress progress = new NoOpFindBugsProgress();;
+        IClassPathBuilderProgress progress = new NoOpFindBugsProgress();
         builder.build(classPath, progress);
         List<ClassDescriptor> appClassList = builder.getAppClassList();
        

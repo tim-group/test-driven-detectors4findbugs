@@ -20,19 +20,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
 */
-package com.youdevise.fbplugins.tdd4fb;
 
+package com.youdevise.fbplugins.tdd4fb.matchers;
 
-import org.hamcrest.Matcher;
+import static java.lang.String.format;
 
-import com.youdevise.fbplugins.tdd4fb.matchers.BugInstanceTypeMatcher;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 
 import edu.umd.cs.findbugs.BugInstance;
 
-public class BugInstanceMatchers {
+public class BugInstanceTypeMatcher extends BaseMatcher<BugInstance> {
 
-    public static Matcher<BugInstance> hasType(String bugType) {
-        return new BugInstanceTypeMatcher(bugType);
+    private final String bugType;
+
+    public BugInstanceTypeMatcher(String bugType) {
+        this.bugType = bugType;
+    }
+    
+    @Override
+    public boolean matches(Object obj) {
+        if(! (obj instanceof BugInstance)) {
+            return false;
+        }
+        BugInstance bug = (BugInstance) obj;
+        
+        return bugType.equals(bug.getType());
+    }
+
+    @Override
+    public void describeTo(Description description) {
+        description.appendText(format("with bug of type '%s'", bugType));
     }
     
 }
