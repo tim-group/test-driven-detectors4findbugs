@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
 */
-package com.youdevise.fbplugins.tdd4fb;
+package com.youdevise.fbplugins.tdd4fb.internal;
 
 import static edu.umd.cs.findbugs.classfile.DescriptorFactory.createClassDescriptorFromDottedClassName;
 
@@ -67,7 +67,7 @@ public class DetectorRunner {
 
     private static void setUpStaticDependenciesWithinFindBugs(BugReporter bugReporter) throws CheckedAnalysisException, IOException,
             InterruptedException {
-        bugReporter.setPriorityThreshold(Priorities.NORMAL_PRIORITY);
+        bugReporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
         ClassPathImpl classPath = new ClassPathImpl();
         ICodeBaseLocator codeBaseLocator = new FilesystemCodeBaseLocator(".");
         ICodeBase codeBase = new DirectoryCodeBase(codeBaseLocator, new File(CODEBASE_DIRECTORY));

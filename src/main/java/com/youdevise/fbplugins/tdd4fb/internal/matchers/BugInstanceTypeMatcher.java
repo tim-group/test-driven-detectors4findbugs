@@ -21,7 +21,7 @@
  * THE SOFTWARE.
 */
 
-package com.youdevise.fbplugins.tdd4fb.matchers;
+package com.youdevise.fbplugins.tdd4fb.internal.matchers;
 
 import static java.lang.String.format;
 

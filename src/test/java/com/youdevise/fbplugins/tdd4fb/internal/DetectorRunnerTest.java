@@ -16,7 +16,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.youdevise.fbplugins.tdd4fb;
+package com.youdevise.fbplugins.tdd4fb.internal;
 
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -24,6 +24,9 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+
+import com.youdevise.fbplugins.tdd4fb.internal.DetectorRunner;
+import com.youdevise.fbplugins.tdd4fb.internal.FindBugsMocks;
 
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;

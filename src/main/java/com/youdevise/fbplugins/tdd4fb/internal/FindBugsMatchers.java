@@ -20,18 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
 */
-package com.youdevise.fbplugins.tdd4fb;
+package com.youdevise.fbplugins.tdd4fb.internal;
 
 
 import org.hamcrest.Matcher;
 
-import com.youdevise.fbplugins.tdd4fb.matchers.BugInstanceTypeMatcher;
+import com.youdevise.fbplugins.tdd4fb.internal.matchers.BugInstanceTypeMatcher;
 
 import edu.umd.cs.findbugs.BugInstance;
 
 public class FindBugsMatchers {
 
-    public static Matcher<BugInstance> hasType(String bugType) {
+    public static Matcher<BugInstance> ofType(String bugType) {
         return new BugInstanceTypeMatcher(bugType);
     }
     
