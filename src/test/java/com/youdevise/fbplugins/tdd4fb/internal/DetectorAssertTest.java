@@ -15,9 +15,6 @@ import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.youdevise.fbplugins.tdd4fb.internal.BugsReportedAsserter;
-import com.youdevise.fbplugins.tdd4fb.internal.FindBugsMocks;
-
 import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Priorities;
@@ -30,8 +27,8 @@ public class DetectorAssertTest {
 	
 	@Before
 	public void setUp() {
-		bugReporter = FindBugsMocks.mockBugReporter();
-		bugInstance = new BugInstance("SOME_BUG_TYPE", Priorities.LOW_PRIORITY);
+		bugReporter = TestingBugReporter.tddBugReporter();
+		bugInstance = new BugInstance("UUF_UNUSED_FIELD", Priorities.LOW_PRIORITY);
 		asserter = new BugsReportedAsserter();
 	}
 	
@@ -75,6 +72,45 @@ public class DetectorAssertTest {
 	assertBugReportedWithMatcherFailsWhenNoBugIsReported() {
 		 // don't report a bug
 		asserter.assertBugReported(bugReporter, alwaysMatch(true));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test public void
+	assertBugsReportedWithManyMatchersPassesWhenNoMatchersFail() {
+		bugReporter.reportBug(bugInstance);
+		bugReporter.reportBug(bugInstance);
+		bugReporter.reportBug(bugInstance);
+		
+		asserter.assertAllBugsReported(bugReporter, alwaysMatch(true), alwaysMatch(true), alwaysMatch(true));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected=AssertionError.class) public void
+	assertBugsReportedWithManyMatchersFailsWhenThereAreMoreMatchersThanBugs() {
+		bugReporter.reportBug(bugInstance);
+		bugReporter.reportBug(bugInstance);
+		
+		asserter.assertAllBugsReported(bugReporter, alwaysMatch(true), alwaysMatch(true), alwaysMatch(true));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected=AssertionError.class) public void
+	assertBugsReportedWithManyMatchersFailsWhenThereAreMoreBugsThanMatchers() {
+		bugReporter.reportBug(bugInstance);
+		bugReporter.reportBug(bugInstance);
+		bugReporter.reportBug(bugInstance);
+		
+		asserter.assertAllBugsReported(bugReporter, alwaysMatch(true), alwaysMatch(true));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected=AssertionError.class) public void
+	assertBugsReportedWithManyMatchersFailsWhenOneMatcherFails() {
+		bugReporter.reportBug(bugInstance);
+		bugReporter.reportBug(bugInstance);
+		bugReporter.reportBug(bugInstance);
+		
+		asserter.assertAllBugsReported(bugReporter, alwaysMatch(true), alwaysMatch(true), alwaysMatch(false));
 	}
 	
 	

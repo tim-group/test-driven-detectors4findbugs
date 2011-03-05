@@ -10,12 +10,16 @@
 
 package com.youdevise.fbplugins.tdd4fb.internal;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Collection;
 
 import org.hamcrest.Matcher;
+
+import com.youdevise.fbplugins.tdd4fb.internal.TestingBugReporter.TddBugReporter;
 
 import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugReporter;
@@ -23,14 +27,34 @@ import edu.umd.cs.findbugs.BugReporter;
 public class BugsReportedAsserter {
 
 	public void assertNoBugsReported(BugReporter bugReporter) {
-		verify(bugReporter, never()).reportBug(any(BugInstance.class));
+		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
+		assertThat(bugsReported.isEmpty(), is(true));
 	}
 
 	public void assertBugReported(BugReporter bugReporter) {
-		verify(bugReporter).reportBug(any(BugInstance.class));
+		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
+		assertThat(bugsReported.isEmpty(), is(false));
 	}
 
 	public void assertBugReported(BugReporter bugReporter, Matcher<BugInstance> matches) {
-		verify(bugReporter).reportBug(argThat(matches));
+		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
+		assertThat(bugsReported, hasItem(matches));
+	}
+	
+	public void assertAllBugsReported(BugReporter bugReporter, Matcher<BugInstance>... matches) {
+		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
+		assertThat("Expected a certain number of bugs to be reported.", bugsReported.size(), is(matches.length));
+		assertThat(bugsReported, hasItems(matches));
+	}
+	
+	private Collection<BugInstance> bugsFrom(BugReporter bugReporter) {
+		if(bugReporter instanceof TddBugReporter) {
+			return ((TddBugReporter)bugReporter).getReportedBugs();
+		} else {
+			throw new AssertionError(
+					"An invalid BugReporter has been used. " +
+					"Please use the BugReporter given by DetectorAssert.bugReporterForTesting(), passing " +
+					"the same BugReporter to your custom detector, and any DetectorAssert assertion methods.");
+		}
 	}
 }

@@ -25,9 +25,6 @@ import static org.mockito.Mockito.verify;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
-import com.youdevise.fbplugins.tdd4fb.internal.DetectorRunner;
-import com.youdevise.fbplugins.tdd4fb.internal.FindBugsMocks;
-
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;
 import edu.umd.cs.findbugs.ba.ClassContext;
@@ -36,7 +33,7 @@ public class DetectorRunnerTest {
 
 	@Test public void runDetectorOnClassVisitsDetectorWithClassContextOfSpecifiedClass() throws Exception {
 		Detector detector = mock(Detector.class);
-		BugReporter bugReporter = FindBugsMocks.mockBugReporter();
+		BugReporter bugReporter = TestingBugReporter.tddBugReporter();
 
 		DetectorRunner.runDetectorOnClass(detector, DetectorRunner.class, bugReporter);
 
