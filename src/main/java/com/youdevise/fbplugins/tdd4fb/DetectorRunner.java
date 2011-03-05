@@ -15,7 +15,7 @@
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.youdevise.fbplugins.tdd4fb.internal;
+package com.youdevise.fbplugins.tdd4fb;
 
 import static edu.umd.cs.findbugs.classfile.DescriptorFactory.createClassDescriptorFromDottedClassName;
 
@@ -46,7 +46,7 @@ import edu.umd.cs.findbugs.classfile.impl.ClassPathImpl;
 import edu.umd.cs.findbugs.classfile.impl.DirectoryCodeBase;
 import edu.umd.cs.findbugs.classfile.impl.FilesystemCodeBaseLocator;
 
-public class DetectorRunner {
+class DetectorRunner {
 
 	private static final String CODEBASE_DIRECTORY = ".";
 	private static final BugReporter STATIC_BUG_REPORTER = TestingBugReporter.tddBugReporter();

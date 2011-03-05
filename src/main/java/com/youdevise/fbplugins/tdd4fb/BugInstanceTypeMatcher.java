@@ -21,7 +21,7 @@
  * THE SOFTWARE.
 */
 
-package com.youdevise.fbplugins.tdd4fb.internal.matchers;
+package com.youdevise.fbplugins.tdd4fb;
 
 import static java.lang.String.format;
 
@@ -30,7 +30,7 @@ import org.hamcrest.Description;
 
 import edu.umd.cs.findbugs.BugInstance;
 
-public class BugInstanceTypeMatcher extends BaseMatcher<BugInstance> {
+class BugInstanceTypeMatcher extends BaseMatcher<BugInstance> {
 
     private final String bugType;
 

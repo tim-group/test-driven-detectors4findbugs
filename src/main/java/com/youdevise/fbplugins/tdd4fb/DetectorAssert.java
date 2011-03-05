@@ -9,12 +9,10 @@
 
 package com.youdevise.fbplugins.tdd4fb;
 
-import static com.youdevise.fbplugins.tdd4fb.internal.DetectorRunner.runDetectorOnClass;
+import static com.youdevise.fbplugins.tdd4fb.DetectorRunner.runDetectorOnClass;
 
 import org.hamcrest.Matcher;
 
-import com.youdevise.fbplugins.tdd4fb.internal.BugsReportedAsserter;
-import com.youdevise.fbplugins.tdd4fb.internal.TestingBugReporter;
 
 import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugReporter;
@@ -54,6 +52,10 @@ public class DetectorAssert {
 
 	public static BugReporter bugReporterForTesting() {
 		return TestingBugReporter.tddBugReporter();
+	}
+
+	public static Matcher<BugInstance> ofType(String type) {
+		return FindBugsMatchers.ofType(type);
 	}
 
 }

@@ -8,7 +8,7 @@
  * 		license/LICENSE.txt
  */
 
-package com.youdevise.fbplugins.tdd4fb.internal;
+package com.youdevise.fbplugins.tdd4fb;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import edu.umd.cs.findbugs.ProjectStats;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 
-public class TestingBugReporter {
+class TestingBugReporter {
 
 	public static BugReporter tddBugReporter() {
 		return new TddBugReporter();

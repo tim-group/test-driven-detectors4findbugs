@@ -8,12 +8,15 @@
  * 		license/LICENSE.txt
  */
 
-package com.youdevise.fbplugins.tdd4fb.internal;
+package com.youdevise.fbplugins.tdd4fb;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.youdevise.fbplugins.tdd4fb.BugsReportedAsserter;
+import com.youdevise.fbplugins.tdd4fb.TestingBugReporter;
 
 import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugReporter;

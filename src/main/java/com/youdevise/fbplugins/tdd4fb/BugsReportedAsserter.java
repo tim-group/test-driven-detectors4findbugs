@@ -8,7 +8,7 @@
  * 		license/LICENSE.txt
  */
 
-package com.youdevise.fbplugins.tdd4fb.internal;
+package com.youdevise.fbplugins.tdd4fb;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -19,12 +19,12 @@ import java.util.Collection;
 
 import org.hamcrest.Matcher;
 
-import com.youdevise.fbplugins.tdd4fb.internal.TestingBugReporter.TddBugReporter;
+import com.youdevise.fbplugins.tdd4fb.TestingBugReporter.TddBugReporter;
 
 import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugReporter;
 
-public class BugsReportedAsserter {
+class BugsReportedAsserter {
 
 	public void assertNoBugsReported(BugReporter bugReporter) {
 		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);

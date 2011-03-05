@@ -10,7 +10,7 @@
 
 package com.youdevise.fbplugins.tdd4fb.example;
 
-import static com.youdevise.fbplugins.tdd4fb.internal.FindBugsMatchers.ofType;
+import static com.youdevise.fbplugins.tdd4fb.DetectorAssert.ofType;
 
 import org.junit.Test;
 
