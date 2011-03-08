@@ -56,6 +56,10 @@ class DetectorRunner {
 	private static final String CODEBASE_DIRECTORY = ".";
 	private static final BugReporter STATIC_BUG_REPORTER = TestingBugReporter.tddBugReporter();
 
+	private static class Singleton {
+		public static final DetectorRunner DETECTOR_RUNNER = new DetectorRunner();
+	}
+	
 	private DetectorRunner() {
 		try {
 			setUpStaticDependenciesWithinFindBugs(STATIC_BUG_REPORTER);
@@ -64,8 +68,8 @@ class DetectorRunner {
 		}
 	}
 
-	private void setUpStaticDependenciesWithinFindBugs(BugReporter bugReporter) throws CheckedAnalysisException,
-			IOException, InterruptedException {
+	private void setUpStaticDependenciesWithinFindBugs(BugReporter bugReporter) 
+			throws CheckedAnalysisException, IOException, InterruptedException {
 		bugReporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
 		ClassPathImpl classPath = new ClassPathImpl();
 		ICodeBaseLocator codeBaseLocator = new FilesystemCodeBaseLocator(".");
@@ -105,10 +109,6 @@ class DetectorRunner {
 		adapter.visitClass(classDescriptor);
 	}
 	
-	private static class Singleton {
-		public static final DetectorRunner DETECTOR_RUNNER = new DetectorRunner();
-	}
-
 	public static void runDetectorOnClass(Detector pluginDetector, Class<?> classToTest, BugReporter bugReporter)
 			throws CheckedAnalysisException, IOException, InterruptedException {
 		Singleton.DETECTOR_RUNNER.doRunDetectorOnClass(pluginDetector, classToTest, bugReporter);
