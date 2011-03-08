@@ -26,11 +26,12 @@ package com.youdevise.fbplugins.tdd4fb;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Collection;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
 import com.youdevise.fbplugins.tdd4fb.TestingBugReporter.TddBugReporter;
 
@@ -64,10 +65,30 @@ class BugsReportedAsserter {
 		if(bugReporter instanceof TddBugReporter) {
 			return ((TddBugReporter)bugReporter).getReportedBugs();
 		} else {
-			throw new AssertionError(
+			throw new DetectorAssertException(
 					"An invalid BugReporter has been used. " +
 					"Please use the BugReporter given by DetectorAssert.bugReporterForTesting(), passing " +
 					"the same BugReporter to your custom detector, and any DetectorAssert assertion methods.");
 		}
 	}
+	
+	/*
+	 * Replace with MatcherAssert.assertThat() if/when only supporting Hamcrest 1.2+
+	 */
+    private static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
+        if (!matcher.matches(actual)) {
+            Description description = new StringDescription();
+            description.appendText(reason)
+                       .appendText("\nExpected: ")
+                       .appendDescriptionOf(matcher)
+                       .appendText("\n     but: ");
+            matcher.describeMismatch(actual, description);
+            
+            throw new DetectorAssertException(description.toString());
+        }
+    }
+    
+    private static <T> void assertThat(T actual, Matcher<? super T> matcher) {
+        assertThat("", actual, matcher);
+    }
 }
