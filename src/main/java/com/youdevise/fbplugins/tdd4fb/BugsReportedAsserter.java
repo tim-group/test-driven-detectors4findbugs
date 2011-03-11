@@ -19,10 +19,11 @@
 package com.youdevise.fbplugins.tdd4fb;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 
 import java.util.Collection;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
@@ -65,23 +66,17 @@ class BugsReportedAsserter {
 		}
 	}
 
-	private Matcher<Iterable<BugInstance>> hasItems(Matcher<BugInstance>... items) {
-		return CoreMatchers.hasItems(items);
-	}
-
-	private Matcher<Iterable<? super BugInstance>> hasItem(Matcher<BugInstance> item) {
-		return CoreMatchers.hasItem(item);
-	}
-
 	/*
 	 * Replace with MatcherAssert.assertThat() if/when only supporting Hamcrest 1.2+
 	 */
 	private static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
 		if (!matcher.matches(actual)) {
 			Description description = new StringDescription();
-			description.appendText(reason).appendText("\nExpected: ").appendDescriptionOf(matcher).appendText(
-					"\n     but: ");
-			matcher.describeMismatch(actual, description);
+			description.appendText(reason)
+			           .appendText("\nExpected: ")
+			           .appendDescriptionOf(matcher)
+			           .appendText("\n     but was: ")
+			           .appendValue(actual);
 
 			throw new DetectorAssertException(description.toString());
 		}
