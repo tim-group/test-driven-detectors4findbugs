@@ -27,12 +27,14 @@ import static edu.umd.cs.findbugs.classfile.DescriptorFactory.createClassDescrip
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;
 import edu.umd.cs.findbugs.DetectorToDetector2Adapter;
 import edu.umd.cs.findbugs.NoOpFindBugsProgress;
 import edu.umd.cs.findbugs.Priorities;
+import edu.umd.cs.findbugs.SystemProperties;
 import edu.umd.cs.findbugs.ba.AnalysisCacheToAnalysisContextAdapter;
 import edu.umd.cs.findbugs.ba.AnalysisContext;
 import edu.umd.cs.findbugs.ba.FieldSummary;
@@ -50,6 +52,7 @@ import edu.umd.cs.findbugs.classfile.impl.ClassFactory;
 import edu.umd.cs.findbugs.classfile.impl.ClassPathImpl;
 import edu.umd.cs.findbugs.classfile.impl.DirectoryCodeBase;
 import edu.umd.cs.findbugs.classfile.impl.FilesystemCodeBaseLocator;
+import edu.umd.cs.findbugs.classfile.impl.ZipFileCodeBase;
 
 class DetectorRunner {
 
@@ -76,6 +79,13 @@ class DetectorRunner {
 		ICodeBase codeBase = new DirectoryCodeBase(codeBaseLocator, new File(CODEBASE_DIRECTORY));
 		codeBase.setApplicationCodeBase(true);
 		classPath.addCodeBase(codeBase);
+		
+		for (String jarFilename : jarFilenamesOnClasspath()) {
+			ICodeBaseLocator jarLocator = new FilesystemCodeBaseLocator(jarFilename);
+			ICodeBase jarCodeBase = new ZipFileCodeBase(jarLocator, new File(jarFilename));
+			classPath.addCodeBase(jarCodeBase);
+		}
+		
 
 		IAnalysisCache analysisCache = ClassFactory.instance().createAnalysisCache(classPath, bugReporter);
 		new ClassContextClassAnalysisEngine().registerWith(analysisCache);
@@ -114,5 +124,8 @@ class DetectorRunner {
 		Singleton.DETECTOR_RUNNER.doRunDetectorOnClass(pluginDetector, classToTest, bugReporter);
 	}
 
+	private static Set<String> jarFilenamesOnClasspath() {
+		return CustomCollections.splitByDelimiterAndFilterByRegex(SystemProperties.getProperty("java.class.path"), File.pathSeparator, ".*\\.jar");
+	}
 
 }
