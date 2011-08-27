@@ -23,6 +23,7 @@
 package com.youdevise.fbplugins.tdd4fb;
 
 import static edu.umd.cs.findbugs.classfile.DescriptorFactory.createClassDescriptorFromDottedClassName;
+import static java.util.Arrays.asList;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +46,7 @@ import edu.umd.cs.findbugs.classfile.IClassPathBuilder;
 import edu.umd.cs.findbugs.classfile.IClassPathBuilderProgress;
 import edu.umd.cs.findbugs.classfile.ICodeBase;
 import edu.umd.cs.findbugs.classfile.ICodeBaseLocator;
+import edu.umd.cs.findbugs.classfile.ResourceNotFoundException;
 import edu.umd.cs.findbugs.classfile.engine.bcel.ClassContextClassAnalysisEngine;
 import edu.umd.cs.findbugs.classfile.impl.ClassFactory;
 import edu.umd.cs.findbugs.classfile.impl.ClassPathImpl;
@@ -55,6 +57,7 @@ class DetectorRunner {
 
 	private static final String CODEBASE_DIRECTORY = ".";
 	private static final BugReporter STATIC_BUG_REPORTER = TestingBugReporter.tddBugReporter();
+	private final AuxCodeBaseLocatorProvider auxCodeBaseLocatorProvider = new AuxCodeBaseLocatorProvider();
 
 	private static class Singleton {
 		public static final DetectorRunner DETECTOR_RUNNER = new DetectorRunner();
@@ -72,11 +75,7 @@ class DetectorRunner {
 			throws CheckedAnalysisException, IOException, InterruptedException {
 		bugReporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
 		ClassPathImpl classPath = new ClassPathImpl();
-		ICodeBaseLocator codeBaseLocator = new FilesystemCodeBaseLocator(".");
-		ICodeBase codeBase = new DirectoryCodeBase(codeBaseLocator, new File(CODEBASE_DIRECTORY));
-		codeBase.setApplicationCodeBase(true);
-		classPath.addCodeBase(codeBase);
-
+		
 		IAnalysisCache analysisCache = ClassFactory.instance().createAnalysisCache(classPath, bugReporter);
 		new ClassContextClassAnalysisEngine().registerWith(analysisCache);
 		new edu.umd.cs.findbugs.classfile.engine.asm.EngineRegistrar().registerAnalysisEngines(analysisCache);
@@ -85,6 +84,13 @@ class DetectorRunner {
 
 		Global.setAnalysisCacheForCurrentThread(analysisCache);
 
+		ICodeBaseLocator codeBaseLocator = new FilesystemCodeBaseLocator(".");
+		ICodeBase codeBase = new DirectoryCodeBase(codeBaseLocator, new File(CODEBASE_DIRECTORY));
+		codeBase.setApplicationCodeBase(true);
+		classPath.addCodeBase(codeBase);
+
+		addAuxCodeBasesFromClassPath(classPath);
+		
 		IClassFactory classFactory = ClassFactory.instance();
 		IClassPathBuilder builder = classFactory.createClassPathBuilder(bugReporter);
 		builder.addCodeBase(codeBaseLocator, true);
@@ -97,6 +103,18 @@ class DetectorRunner {
 		AnalysisContext.setCurrentAnalysisContext(analysisContext);
 		analysisContext.setAppClassList(appClassList);
 		analysisContext.setFieldSummary(new FieldSummary());
+	}
+
+	private void addAuxCodeBasesFromClassPath(ClassPathImpl classPath) throws IOException, ResourceNotFoundException {
+		Iterable<ICodeBaseLocator> codeBaseLocators = auxCodeBaseLocatorProvider.get(classPathEntries());
+		for (ICodeBaseLocator auxCodeBaseLocator : codeBaseLocators) {
+			ICodeBase auxCodeBase = auxCodeBaseLocator.openCodeBase();
+			classPath.addCodeBase(auxCodeBase);
+		}
+	}
+
+	private Iterable<String> classPathEntries() {
+		return asList(System.getProperty("java.class.path").split(":"));
 	}
 
 	private void doRunDetectorOnClass(Detector pluginDetector, Class<?> classToTest, BugReporter bugReporter)
