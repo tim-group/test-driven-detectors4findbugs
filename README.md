@@ -4,7 +4,24 @@ Utility for test driving development of [FindBugs](http://findbugs.sourceforge.n
 
 # Installation #
 
-Add the JAR as a dependency for use in unit tests.
+Add the JAR (available from the Downloads section) as a dependency for use in unit tests. The dependency can also be listed in Maven compatible build tools with the following information:
+
+<table>
+    <tr>
+        <td>groupId</td>
+        <td>artifactId</td>
+        <td>version</td>
+        <td>scope</td>
+    </tr>
+    <tr>
+        <td>com.youdevise</td>
+        <td>test-driven-detectors4findbugs</td>
+        <td>0.2</td>
+        <td>test</td>
+    </tr>
+</table>
+
+
 
 test-driven-detectors4findbugs depends on [Hamcrest](http://code.google.com/p/hamcrest/) 1.1+, and FindBugs 1.3.9.
 
