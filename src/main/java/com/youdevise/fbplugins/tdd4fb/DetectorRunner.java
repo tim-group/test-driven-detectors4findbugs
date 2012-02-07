@@ -23,6 +23,7 @@
 package com.youdevise.fbplugins.tdd4fb;
 
 import static edu.umd.cs.findbugs.classfile.DescriptorFactory.createClassDescriptorFromDottedClassName;
+import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
 
 import java.io.File;
@@ -114,7 +115,7 @@ class DetectorRunner {
 	}
 
 	private Iterable<String> classPathEntries() {
-		return asList(System.getProperty("java.class.path").split(":"));
+	    return asList(getProperty("java.class.path").split(File.pathSeparator));
 	}
 
 	private void doRunDetectorOnClass(Detector pluginDetector, Class<?> classToTest, BugReporter bugReporter)
