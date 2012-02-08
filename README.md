@@ -16,7 +16,7 @@ Add the JAR (available from the Downloads section) as a dependency for use in un
     <tr>
         <td>com.youdevise</td>
         <td>test-driven-detectors4findbugs</td>
-        <td>0.2</td>
+        <td>0.2.1</td>
         <td>test</td>
     </tr>
 </table>
