@@ -38,27 +38,56 @@ public class DetectorAssert {
 
     private static BugsReportedAsserter asserter = new BugsReportedAsserter();
 
-    public static void assertBugReported(Class<?> classToTest,
-            Detector detector, BugReporter bugReporter,
-            Matcher<BugInstance> bugInstanceMatcher) throws Exception {
+    public static void assertBugReported(Class<?> classToTest, Detector detector, BugReporter bugReporter)
+            throws Exception {
         assertBugReported(classToTest, adapt(detector), bugReporter);
+    }
+
+    public static void assertBugReported(Class<?> classToTest, Detector2 detector, BugReporter bugReporter)
+            throws Exception {
+        runDetectorOnClass(detector, classToTest, bugReporter);
+        asserter.assertBugReported(bugReporter);
+    }
+
+    public static void assertBugReported(Class<?> classToTest,
+                                         Detector detector,
+                                         BugReporter bugReporter,
+                                         Matcher<BugInstance> bugInstanceMatcher) throws Exception {
+        assertBugReported(classToTest, adapt(detector), bugReporter);
+    }
+
+    public static void assertBugReported(Class<?> classToTest,
+                                         Detector2 detector,
+                                         BugReporter bugReporter,
+                                         Matcher<BugInstance> bugInstanceMatcher) throws Exception {
+        runDetectorOnClass(detector, classToTest, bugReporter);
+        asserter.assertBugReported(bugReporter, bugInstanceMatcher);
     }
 
     public static void assertAllBugsReported(Class<?> classToTest,
-            Detector detector, BugReporter bugReporter,
-            Matcher<BugInstance>... bugInstanceMatchers) throws Exception {
-        assertAllBugsReported(classToTest, adapt(detector), bugReporter,
-                bugInstanceMatchers);
+                                             Detector detector,
+                                             BugReporter bugReporter,
+                                             Matcher<BugInstance>... bugInstanceMatchers) throws Exception {
+        assertAllBugsReported(classToTest, adapt(detector), bugReporter, bugInstanceMatchers);
     }
 
-    public static void assertBugReported(Class<?> classToTest,
-            Detector detector, BugReporter bugReporter) throws Exception {
-        assertBugReported(classToTest, adapt(detector), bugReporter);
+    public static void assertAllBugsReported(Class<?> classToTest,
+                                             Detector2 detector,
+                                             BugReporter bugReporter,
+                                             Matcher<BugInstance>... bugInstanceMatchers) throws Exception {
+        runDetectorOnClass(detector, classToTest, bugReporter);
+        asserter.assertAllBugsReported(bugReporter, bugInstanceMatchers);
     }
 
-    public static void assertNoBugsReported(Class<?> classToTest,
-            Detector detector, BugReporter bugReporter) throws Exception {
+    public static void assertNoBugsReported(Class<?> classToTest, Detector detector, BugReporter bugReporter)
+            throws Exception {
         assertNoBugsReported(classToTest, adapt(detector), bugReporter);
+    }
+
+    public static void assertNoBugsReported(Class<?> classToTest, Detector2 detector, BugReporter bugReporter)
+            throws Exception {
+        runDetectorOnClass(detector, classToTest, bugReporter);
+        asserter.assertNoBugsReported(bugReporter);
     }
 
     public static BugReporter bugReporterForTesting() {
@@ -69,38 +98,12 @@ public class DetectorAssert {
         return FindBugsMatchers.ofType(type);
     }
 
-    public static void assertBugReported(Class<?> classToTest,
-            Detector2 detector, BugReporter bugReporter,
-            Matcher<BugInstance> bugInstanceMatcher) throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
-        asserter.assertBugReported(bugReporter, bugInstanceMatcher);
-    }
-
-    public static void assertAllBugsReported(Class<?> classToTest,
-            Detector2 detector, BugReporter bugReporter,
-            Matcher<BugInstance>... bugInstanceMatchers) throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
-        asserter.assertAllBugsReported(bugReporter, bugInstanceMatchers);
-    }
-
-    public static void assertBugReported(Class<?> classToTest,
-            Detector2 detector, BugReporter bugReporter) throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
-        asserter.assertBugReported(bugReporter);
-    }
-
-    public static void assertNoBugsReported(Class<?> classToTest,
-            Detector2 detector, BugReporter bugReporter) throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
-        asserter.assertNoBugsReported(bugReporter);
-    }
-
     public static void addRegistarar(IAnalysisEngineRegistrar registrar) {
         DetectorRunner.addRegistarar(registrar);
     }
 
     public static void clearRegistarar() {
-        DetectorRunner.clearRegistarar();
+        DetectorRunner.clearRegistrar();
     }
 
     private static Detector2 adapt(Detector detector) {

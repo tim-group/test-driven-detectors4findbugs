@@ -19,7 +19,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
-*/
+ */
 package com.youdevise.fbplugins.tdd4fb;
 
 import static edu.umd.cs.findbugs.classfile.DescriptorFactory.createClassDescriptorFromDottedClassName;
@@ -59,99 +59,101 @@ import edu.umd.cs.findbugs.classfile.impl.FilesystemCodeBaseLocator;
 
 class DetectorRunner {
 
-	private static final String CODEBASE_DIRECTORY = ".";
-	private static final BugReporter STATIC_BUG_REPORTER = TestingBugReporter.tddBugReporter();
-	private final AuxCodeBaseLocatorProvider auxCodeBaseLocatorProvider = new AuxCodeBaseLocatorProvider();
-	private final List<IAnalysisEngineRegistrar> userDefined = new ArrayList<IAnalysisEngineRegistrar>();
+    private static final String CODEBASE_DIRECTORY = ".";
+    private static final BugReporter STATIC_BUG_REPORTER = TestingBugReporter.tddBugReporter();
+    private final AuxCodeBaseLocatorProvider auxCodeBaseLocatorProvider = new AuxCodeBaseLocatorProvider();
+    private final List<IAnalysisEngineRegistrar> userDefined = new ArrayList<IAnalysisEngineRegistrar>();
 
-	private static class Singleton {
-		public static final DetectorRunner DETECTOR_RUNNER = new DetectorRunner();
-	}
+    private static class Singleton {
+        public static final DetectorRunner DETECTOR_RUNNER = new DetectorRunner();
+    }
 
-	private DetectorRunner() {
-		try {
-			setUpStaticDependenciesWithinFindBugs(STATIC_BUG_REPORTER);
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to setup FindBugs dependencies for testing.", e);
-		}
-	}
+    private DetectorRunner() {
+        try {
+            setUpStaticDependenciesWithinFindBugs(STATIC_BUG_REPORTER);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to setup FindBugs dependencies for testing.", e);
+        }
+    }
 
-	private void setUpStaticDependenciesWithinFindBugs(BugReporter bugReporter) 
-			throws CheckedAnalysisException, IOException, InterruptedException {
-		bugReporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
-		ClassPathImpl classPath = new ClassPathImpl();
+    private void setUpStaticDependenciesWithinFindBugs(BugReporter bugReporter) throws CheckedAnalysisException,
+            IOException, InterruptedException {
+        bugReporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
+        ClassPathImpl classPath = new ClassPathImpl();
 
-		IAnalysisCache analysisCache = ClassFactory.instance().createAnalysisCache(classPath, bugReporter);
-		new ClassContextClassAnalysisEngine().registerWith(analysisCache);
-		new edu.umd.cs.findbugs.classfile.engine.asm.EngineRegistrar().registerAnalysisEngines(analysisCache);
-		new edu.umd.cs.findbugs.classfile.engine.bcel.EngineRegistrar().registerAnalysisEngines(analysisCache);
-		new edu.umd.cs.findbugs.classfile.engine.EngineRegistrar().registerAnalysisEngines(analysisCache);
-		registUserDefined(analysisCache);
+        IAnalysisCache analysisCache = ClassFactory.instance().createAnalysisCache(classPath, bugReporter);
+        new ClassContextClassAnalysisEngine().registerWith(analysisCache);
+        new edu.umd.cs.findbugs.classfile.engine.asm.EngineRegistrar().registerAnalysisEngines(analysisCache);
+        new edu.umd.cs.findbugs.classfile.engine.bcel.EngineRegistrar().registerAnalysisEngines(analysisCache);
+        new edu.umd.cs.findbugs.classfile.engine.EngineRegistrar().registerAnalysisEngines(analysisCache);
+        registUserDefined(analysisCache);
 
-		Global.setAnalysisCacheForCurrentThread(analysisCache);
+        Global.setAnalysisCacheForCurrentThread(analysisCache);
 
-		ICodeBaseLocator codeBaseLocator = new FilesystemCodeBaseLocator(".");
-		ICodeBase codeBase = new DirectoryCodeBase(codeBaseLocator, new File(CODEBASE_DIRECTORY));
-		codeBase.setApplicationCodeBase(true);
-		classPath.addCodeBase(codeBase);
+        ICodeBaseLocator codeBaseLocator = new FilesystemCodeBaseLocator(".");
+        ICodeBase codeBase = new DirectoryCodeBase(codeBaseLocator, new File(CODEBASE_DIRECTORY));
+        codeBase.setApplicationCodeBase(true);
+        classPath.addCodeBase(codeBase);
 
-		addAuxCodeBasesFromClassPath(classPath);
+        addAuxCodeBasesFromClassPath(classPath);
 
-		IClassFactory classFactory = ClassFactory.instance();
-		IClassPathBuilder builder = classFactory.createClassPathBuilder(bugReporter);
-		builder.addCodeBase(codeBaseLocator, true);
-		builder.scanNestedArchives(true);
-		IClassPathBuilderProgress progress = new NoOpFindBugsProgress();
-		builder.build(classPath, progress);
-		List<ClassDescriptor> appClassList = builder.getAppClassList();
+        IClassFactory classFactory = ClassFactory.instance();
+        IClassPathBuilder builder = classFactory.createClassPathBuilder(bugReporter);
+        builder.addCodeBase(codeBaseLocator, true);
+        builder.scanNestedArchives(true);
+        IClassPathBuilderProgress progress = new NoOpFindBugsProgress();
+        builder.build(classPath, progress);
+        List<ClassDescriptor> appClassList = builder.getAppClassList();
 
-		AnalysisCacheToAnalysisContextAdapter analysisContext = new AnalysisCacheToAnalysisContextAdapter();
-		AnalysisContext.setCurrentAnalysisContext(analysisContext);
-		analysisContext.setAppClassList(appClassList);
-		analysisContext.setFieldSummary(new FieldSummary());
-	}
+        AnalysisCacheToAnalysisContextAdapter analysisContext = new AnalysisCacheToAnalysisContextAdapter();
+        AnalysisContext.setCurrentAnalysisContext(analysisContext);
+        analysisContext.setAppClassList(appClassList);
+        analysisContext.setFieldSummary(new FieldSummary());
+    }
 
-	private void registUserDefined(IAnalysisCache analysisCache) {
-		for (IAnalysisEngineRegistrar registrar : userDefined) {
-			registrar.registerAnalysisEngines(analysisCache);
-		}
-	}
+    private void registUserDefined(IAnalysisCache analysisCache) {
+        for (IAnalysisEngineRegistrar registrar : userDefined) {
+            registrar.registerAnalysisEngines(analysisCache);
+        }
+    }
 
-	static void addRegistarar(IAnalysisEngineRegistrar registrar) {
-		Singleton.DETECTOR_RUNNER.userDefined.add(registrar);
-	}
+    static void addRegistarar(IAnalysisEngineRegistrar registrar) {
+        Singleton.DETECTOR_RUNNER.userDefined.add(registrar);
+    }
 
-	static void clearRegistarar() {
-		Singleton.DETECTOR_RUNNER.userDefined.clear();
-	}
+    static void clearRegistrar() {
+        Singleton.DETECTOR_RUNNER.userDefined.clear();
+    }
 
-	private void addAuxCodeBasesFromClassPath(ClassPathImpl classPath) throws IOException, ResourceNotFoundException {
-		Iterable<ICodeBaseLocator> codeBaseLocators = auxCodeBaseLocatorProvider.get(classPathEntries());
-		for (ICodeBaseLocator auxCodeBaseLocator : codeBaseLocators) {
-			ICodeBase auxCodeBase = auxCodeBaseLocator.openCodeBase();
-			classPath.addCodeBase(auxCodeBase);
-		}
-	}
+    private void addAuxCodeBasesFromClassPath(ClassPathImpl classPath) throws IOException, ResourceNotFoundException {
+        Iterable<ICodeBaseLocator> codeBaseLocators = auxCodeBaseLocatorProvider.get(classPathEntries());
+        for (ICodeBaseLocator auxCodeBaseLocator : codeBaseLocators) {
+            ICodeBase auxCodeBase = auxCodeBaseLocator.openCodeBase();
+            classPath.addCodeBase(auxCodeBase);
+        }
+    }
 
-	private Iterable<String> classPathEntries() {
-		return asList(getProperty("java.class.path").split(File.pathSeparator));
-	}
+    private Iterable<String> classPathEntries() {
+        return asList(getProperty("java.class.path").split(File.pathSeparator));
+    }
 
-	private void doRunDetectorOnClass(Detector2 pluginDetector, Class<?> classToTest, BugReporter bugReporter)
-			throws CheckedAnalysisException, IOException, InterruptedException {
+    private void doRunDetectorOnClass(Detector2 pluginDetector, Class<?> classToTest, BugReporter bugReporter)
+            throws CheckedAnalysisException, IOException, InterruptedException {
 
-		String dottedClassName = classToTest.getName();
-		ClassDescriptor classDescriptor = createClassDescriptorFromDottedClassName(dottedClassName);
-		pluginDetector.visitClass(classDescriptor);
-	}
+        String dottedClassName = classToTest.getName();
+        ClassDescriptor classDescriptor = createClassDescriptorFromDottedClassName(dottedClassName);
+        pluginDetector.visitClass(classDescriptor);
+    }
 
-	public static void runDetectorOnClass(Detector2 pluginDetector, Class<?> classToTest, BugReporter bugReporter)
-			throws CheckedAnalysisException, IOException, InterruptedException {
-		Singleton.DETECTOR_RUNNER.doRunDetectorOnClass(pluginDetector, classToTest, bugReporter);
-	}
+    public static void runDetectorOnClass(Detector2 pluginDetector, Class<?> classToTest, BugReporter bugReporter)
+            throws CheckedAnalysisException, IOException, InterruptedException {
+        Singleton.DETECTOR_RUNNER.doRunDetectorOnClass(pluginDetector, classToTest, bugReporter);
+    }
 
-	public static void runDetectorOnClass(Detector pluginDetector, Class<?> classToTest, BugReporter bugReporter)
-			throws CheckedAnalysisException, IOException, InterruptedException {
-		Singleton.DETECTOR_RUNNER.doRunDetectorOnClass(new DetectorToDetector2Adapter(pluginDetector), classToTest, bugReporter);
-	}
+    public static void runDetectorOnClass(Detector pluginDetector, Class<?> classToTest, BugReporter bugReporter)
+            throws CheckedAnalysisException, IOException, InterruptedException {
+        Singleton.DETECTOR_RUNNER.doRunDetectorOnClass(new DetectorToDetector2Adapter(pluginDetector),
+                                                       classToTest,
+                                                       bugReporter);
+    }
 }
