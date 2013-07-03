@@ -22,6 +22,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
@@ -30,7 +31,9 @@ import com.youdevise.fbplugins.tdd4fb.TestingBugReporter;
 
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;
+import edu.umd.cs.findbugs.Detector2;
 import edu.umd.cs.findbugs.ba.ClassContext;
+import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 
 public class DetectorRunnerTest {
 
@@ -41,6 +44,15 @@ public class DetectorRunnerTest {
 		DetectorRunner.runDetectorOnClass(detector, DetectorRunner.class, bugReporter);
 
 		verify(detector).visitClassContext(argThat(isClassContextFor("DetectorRunner")));
+	}
+
+	@Test public void runDetector2OnClassVisitsDetectorWithClassContextOfSpecifiedClass() throws Exception {
+		Detector2 detector = mock(Detector2.class);
+		BugReporter bugReporter = TestingBugReporter.tddBugReporter();
+
+		DetectorRunner.runDetectorOnClass(detector, DetectorRunner.class, bugReporter);
+
+		verify(detector).visitClass(argThat(isClassDescriptorFor("DetectorRunner")));
 	}
 
 	public static ArgumentMatcher<ClassContext> isClassContextFor(final String simpleClassName) {
@@ -55,4 +67,18 @@ public class DetectorRunnerTest {
 
 		};
 	}
+
+	private Matcher<ClassDescriptor> isClassDescriptorFor(final String simpleClassName) {
+		return new ArgumentMatcher<ClassDescriptor>() {
+			@Override public boolean matches(Object argument) {
+				if (!(argument instanceof ClassDescriptor)) {
+					return false;
+				} else {
+					return ((ClassDescriptor) argument).getSimpleName().equals(simpleClassName);
+				}
+			}
+
+		};
+	}
 }
+
