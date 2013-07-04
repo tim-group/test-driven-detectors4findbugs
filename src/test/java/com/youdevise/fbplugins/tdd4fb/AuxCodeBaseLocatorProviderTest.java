@@ -32,13 +32,11 @@ public class AuxCodeBaseLocatorProviderTest {
 
 	private Matcher<ICodeBaseLocator> auxilliaryCodeBaseFor(final String jarPath) {
 		return new TypeSafeMatcher<ICodeBaseLocator>() {
-			@Override
 			public void describeTo(Description description) {
 				description.appendText("a FileSystemCodeBaseLocator ")
 						   .appendText("with directory equal to ").appendValue(jarPath);
 			}
 
-			@Override
 			public boolean matchesSafely(ICodeBaseLocator codeBaseLocator) {
 				return codeBaseLocator instanceof FilesystemCodeBaseLocator
 						&& ((FilesystemCodeBaseLocator)codeBaseLocator).getPathName().equals(jarPath);

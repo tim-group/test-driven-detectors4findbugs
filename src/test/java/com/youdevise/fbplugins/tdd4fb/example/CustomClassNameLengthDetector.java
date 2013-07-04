@@ -39,11 +39,9 @@ public class CustomClassNameLengthDetector implements Detector {
 		this.bugReporter = bugReporter;
 	}
 	
-	@Override public void report() {
-		
-	}
+	public void report() { }
 
-	@Override public void visitClassContext(ClassContext classContext) {
+	public void visitClassContext(ClassContext classContext) {
 		int classNameLength = classContext.getClassDescriptor().getSimpleName().length();
 		
 		if(classNameLength > ARBITRARY_MAX_CLASS_NAME_LENGTH) {

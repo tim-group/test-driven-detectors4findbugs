@@ -132,8 +132,8 @@ public class DetectorAssertTest {
 	
 	private BaseMatcher<BugInstance> alwaysMatch(final boolean alwaysMatch) {
 		return new BaseMatcher<BugInstance>() {
-			@Override public boolean matches(Object item) { return alwaysMatch; }
-			@Override public void describeTo(Description description) { }
+			public boolean matches(Object item) { return alwaysMatch; }
+			public void describeTo(Description description) { }
 		};
 	}
 

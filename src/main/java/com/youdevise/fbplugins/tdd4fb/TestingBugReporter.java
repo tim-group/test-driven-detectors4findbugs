@@ -45,11 +45,11 @@ class TestingBugReporter {
 		private ProjectStats projectStats = new ProjectStats();
 		private Collection<BugInstance> reportedBugs = new ArrayList<BugInstance>();
 		
-		@Override public ProjectStats getProjectStats() {
+		public ProjectStats getProjectStats() {
 			return projectStats;
 		}
 
-		@Override public void reportBug(BugInstance bugInstance) {
+		public void reportBug(BugInstance bugInstance) {
 			reportedBugs.add(bugInstance);
 		}
 		
@@ -57,18 +57,18 @@ class TestingBugReporter {
 			return Collections.unmodifiableCollection(reportedBugs);
 		}
 
-		@Override public void addObserver(BugReporterObserver observer) { }
-		@Override public void finish() { }
-		@Override public BugReporter getRealBugReporter() { return this; }
-		@Override public void reportQueuedErrors() { }
-		@Override public void setErrorVerbosity(int level) { }
-		@Override public void setPriorityThreshold(int threshold) { }
-		@Override public void logError(String message) { }
-		@Override public void logError(String message, Throwable e) { }
-		@Override public void reportMissingClass(ClassNotFoundException ex) { }
-		@Override public void reportMissingClass(ClassDescriptor classDescriptor) { }
-		@Override public void reportSkippedAnalysis(MethodDescriptor method) { }
-		@Override public void observeClass(ClassDescriptor classDescriptor) { }
+		public void addObserver(BugReporterObserver observer) { }
+		public void finish() { }
+		public BugReporter getRealBugReporter() { return this; }
+		public void reportQueuedErrors() { }
+		public void setErrorVerbosity(int level) { }
+		public void setPriorityThreshold(int threshold) { }
+		public void logError(String message) { }
+		public void logError(String message, Throwable e) { }
+		public void reportMissingClass(ClassNotFoundException ex) { }
+		public void reportMissingClass(ClassDescriptor classDescriptor) { }
+		public void reportSkippedAnalysis(MethodDescriptor method) { }
+		public void observeClass(ClassDescriptor classDescriptor) { }
 		
 	}
 	
