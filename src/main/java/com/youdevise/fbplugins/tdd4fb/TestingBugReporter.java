@@ -23,53 +23,91 @@
 
 package com.youdevise.fbplugins.tdd4fb;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import edu.umd.cs.findbugs.BugCollection;
 import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.BugReporterObserver;
 import edu.umd.cs.findbugs.ProjectStats;
+import edu.umd.cs.findbugs.SortedBugCollection;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 
 class TestingBugReporter {
 
-	public static BugReporter tddBugReporter() {
-		return new TddBugReporter();
-	}
-	
-	static class TddBugReporter implements BugReporter {
+    public static BugReporter tddBugReporter() {
+        return crossVersionBugReporter();
+    }
+    
+    private static BugReporter crossVersionBugReporter() {
+        Object proxy = Proxy.newProxyInstance(
+                TddBugReporter.class.getClassLoader(),
+                new Class<?>[] { TddBugReporter.class }, 
+                new BugReporterInvocationHandler());
+        return (TddBugReporter) proxy;
+    }
+    
+    private static class BugReporterInvocationHandler implements InvocationHandler {
+        private final TddBugReporter concreteBugReporter = new CrossVersionTddBugReporter();
+        
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            if ("getBugCollection".equals(method.getName())) {
+                return concreteBugReporter.getBugCollection();
+            } 
+            return method.invoke(concreteBugReporter, args);
+        }
+    }
+    
+    public static interface TddBugReporter extends BugReporter {
+        Collection<BugInstance> getReportedBugs();
+        BugCollection getBugCollection();
+    }
+    
+    private static class CrossVersionTddBugReporter implements TddBugReporter {
 
-		private ProjectStats projectStats = new ProjectStats();
-		private Collection<BugInstance> reportedBugs = new ArrayList<BugInstance>();
-		
-		public ProjectStats getProjectStats() {
-			return projectStats;
-		}
+        private ProjectStats projectStats = new ProjectStats();
+        private Collection<BugInstance> reportedBugs = new ArrayList<BugInstance>();
+        
+        public ProjectStats getProjectStats() {
+            return projectStats;
+        }
 
-		public void reportBug(BugInstance bugInstance) {
-			reportedBugs.add(bugInstance);
-		}
-		
-		public Collection<BugInstance> getReportedBugs() {
-			return Collections.unmodifiableCollection(reportedBugs);
-		}
+        public void reportBug(BugInstance bugInstance) {
+            reportedBugs.add(bugInstance);
+        }
+        
+        public Collection<BugInstance> getReportedBugs() {
+            return Collections.unmodifiableCollection(reportedBugs);
+        }
+        
+        public BugCollection getBugCollection() {
+            SortedBugCollection sortedBugCollection = new SortedBugCollection();
+            sortedBugCollection.addAll(getReportedBugs());
+            return sortedBugCollection;
+        }
+        
+        public BugReporter getRealBugReporter() {
+            return null;
+        }
 
-		public void addObserver(BugReporterObserver observer) { }
-		public void finish() { }
-		public BugReporter getRealBugReporter() { return this; }
-		public void reportQueuedErrors() { }
-		public void setErrorVerbosity(int level) { }
-		public void setPriorityThreshold(int threshold) { }
-		public void logError(String message) { }
-		public void logError(String message, Throwable e) { }
-		public void reportMissingClass(ClassNotFoundException ex) { }
-		public void reportMissingClass(ClassDescriptor classDescriptor) { }
-		public void reportSkippedAnalysis(MethodDescriptor method) { }
-		public void observeClass(ClassDescriptor classDescriptor) { }
-		
-	}
-	
+        public void addObserver(BugReporterObserver observer) { }
+        public void finish() { }
+        public void reportQueuedErrors() { }
+        public void setErrorVerbosity(int level) { }
+        public void setPriorityThreshold(int threshold) { }
+        public void logError(String message) { }
+        public void logError(String message, Throwable e) { }
+        public void reportMissingClass(ClassNotFoundException ex) { }
+        public void reportMissingClass(ClassDescriptor classDescriptor) { }
+        public void reportSkippedAnalysis(MethodDescriptor method) { }
+        public void observeClass(ClassDescriptor classDescriptor) { }
+
+    }
+    
 }
