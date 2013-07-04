@@ -29,6 +29,8 @@ test-driven-detectors4findbugs depends on [Hamcrest](http://code.google.com/p/ha
 
 Dependency on 1.3.9 version of FindBugs is only for testing, custom detectors which pass tests with 1.3.9 have been verified to work from version 1.3.7 of FindBugs.
 
+As of the next release, FindBugs releases earlier than 1.3.9 will not be supported. Support will range from 1.3.9 to the latest stable release of the 2.x branch.
+
 # How To Use
 
 An example would best illustrate how to use test your custom detectors.
