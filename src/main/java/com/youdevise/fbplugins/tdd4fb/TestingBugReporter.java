@@ -92,10 +92,6 @@ class TestingBugReporter {
             return sortedBugCollection;
         }
         
-        public BugReporter getRealBugReporter() {
-            return null;
-        }
-
         public void addObserver(BugReporterObserver observer) { }
         public void finish() { }
         public void reportQueuedErrors() { }
