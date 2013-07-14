@@ -98,11 +98,11 @@ public class DetectorAssert {
         return FindBugsMatchers.ofType(type);
     }
 
-    public static void addRegistarar(IAnalysisEngineRegistrar registrar) {
-        DetectorRunner.addRegistarar(registrar);
+    public static void addRegistrar(IAnalysisEngineRegistrar registrar) {
+        DetectorRunner.addRegistrar(registrar);
     }
 
-    public static void clearRegistarar() {
+    public static void clearRegistrar() {
         DetectorRunner.clearRegistrar();
     }
 

@@ -86,7 +86,7 @@ class DetectorRunner {
         new edu.umd.cs.findbugs.classfile.engine.asm.EngineRegistrar().registerAnalysisEngines(analysisCache);
         new edu.umd.cs.findbugs.classfile.engine.bcel.EngineRegistrar().registerAnalysisEngines(analysisCache);
         new edu.umd.cs.findbugs.classfile.engine.EngineRegistrar().registerAnalysisEngines(analysisCache);
-        registUserDefined(analysisCache);
+        registerUserDefined(analysisCache);
 
         Global.setAnalysisCacheForCurrentThread(analysisCache);
 
@@ -111,13 +111,13 @@ class DetectorRunner {
         analysisContext.setFieldSummary(new FieldSummary());
     }
 
-    private void registUserDefined(IAnalysisCache analysisCache) {
+    private void registerUserDefined(IAnalysisCache analysisCache) {
         for (IAnalysisEngineRegistrar registrar : userDefined) {
             registrar.registerAnalysisEngines(analysisCache);
         }
     }
 
-    static void addRegistarar(IAnalysisEngineRegistrar registrar) {
+    static void addRegistrar(IAnalysisEngineRegistrar registrar) {
         Singleton.DETECTOR_RUNNER.userDefined.add(registrar);
     }
 
