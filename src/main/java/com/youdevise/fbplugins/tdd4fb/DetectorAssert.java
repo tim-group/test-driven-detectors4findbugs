@@ -23,8 +23,6 @@
 
 package com.youdevise.fbplugins.tdd4fb;
 
-import static com.youdevise.fbplugins.tdd4fb.DetectorRunner.runDetectorOnClass;
-
 import org.hamcrest.Matcher;
 
 import edu.umd.cs.findbugs.BugInstance;
@@ -36,7 +34,8 @@ import edu.umd.cs.findbugs.classfile.IAnalysisEngineRegistrar;
 
 public class DetectorAssert {
 
-    private static BugsReportedAsserter asserter = new BugsReportedAsserter();
+    private static final BugsReportedAsserter asserter = new BugsReportedAsserter();
+    private static final DetectorRunner detectorRunner = new DetectorRunner();
 
     public static void assertBugReported(Class<?> classToTest, Detector detector, BugReporter bugReporter)
             throws Exception {
@@ -45,7 +44,7 @@ public class DetectorAssert {
 
     public static void assertBugReported(Class<?> classToTest, Detector2 detector, BugReporter bugReporter)
             throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
+        detectorRunner.runDetectorOnClass(detector, classToTest, bugReporter);
         asserter.assertBugReported(bugReporter);
     }
 
@@ -60,7 +59,7 @@ public class DetectorAssert {
                                          Detector2 detector,
                                          BugReporter bugReporter,
                                          Matcher<BugInstance> bugInstanceMatcher) throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
+        detectorRunner.runDetectorOnClass(detector, classToTest, bugReporter);
         asserter.assertBugReported(bugReporter, bugInstanceMatcher);
     }
 
@@ -75,7 +74,7 @@ public class DetectorAssert {
                                              Detector2 detector,
                                              BugReporter bugReporter,
                                              Matcher<BugInstance>... bugInstanceMatchers) throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
+        detectorRunner.runDetectorOnClass(detector, classToTest, bugReporter);
         asserter.assertAllBugsReported(bugReporter, bugInstanceMatchers);
     }
 
@@ -83,14 +82,19 @@ public class DetectorAssert {
             throws Exception {
         assertNoBugsReported(classToTest, adapt(detector), bugReporter);
     }
+    
+    private static Detector2 adapt(Detector detector) {
+        return new DetectorToDetector2Adapter(detector);
+    }
 
     public static void assertNoBugsReported(Class<?> classToTest, Detector2 detector, BugReporter bugReporter)
             throws Exception {
-        runDetectorOnClass(detector, classToTest, bugReporter);
+        detectorRunner.runDetectorOnClass(detector, classToTest, bugReporter);
         asserter.assertNoBugsReported(bugReporter);
     }
 
     public static BugReporter bugReporterForTesting() {
+        detectorRunner.assertInitialised();
         return TestingBugReporter.tddBugReporter();
     }
 
@@ -99,15 +103,13 @@ public class DetectorAssert {
     }
 
     public static void addRegistrar(IAnalysisEngineRegistrar registrar) {
-        DetectorRunner.addRegistrar(registrar);
+        detectorRunner.addRegistrar(registrar);
     }
 
     public static void clearRegistrar() {
-        DetectorRunner.clearRegistrar();
+        detectorRunner.clearRegistrar();
     }
 
-    private static Detector2 adapt(Detector detector) {
-        return new DetectorToDetector2Adapter(detector);
-    }
+
 
 }

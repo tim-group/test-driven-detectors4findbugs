@@ -18,6 +18,7 @@
 
 package com.youdevise.fbplugins.tdd4fb;
 
+import static com.youdevise.fbplugins.tdd4fb.TestingBugReporter.tddBugReporter;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -26,34 +27,32 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
-import com.youdevise.fbplugins.tdd4fb.DetectorRunner;
-import com.youdevise.fbplugins.tdd4fb.TestingBugReporter;
-
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;
 import edu.umd.cs.findbugs.Detector2;
 import edu.umd.cs.findbugs.ba.ClassContext;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
 
+
 public class DetectorRunnerTest {
 
-	@Test public void runDetectorOnClassVisitsDetectorWithClassContextOfSpecifiedClass() throws Exception {
-		Detector detector = mock(Detector.class);
-		BugReporter bugReporter = TestingBugReporter.tddBugReporter();
+	private final Detector detector = mock(Detector.class);
+	private final Detector2 detector2 = mock(Detector2.class);
+    private final BugReporter bugReporter = tddBugReporter();
 
-		DetectorRunner.runDetectorOnClass(detector, DetectorRunner.class, bugReporter);
+    
+    @Test public void runDetectorOnClassVisitsDetectorWithClassContextOfSpecifiedClass() throws Exception {
+		new DetectorRunner().runDetectorOnClass(detector, DetectorRunner.class, bugReporter);
 
 		verify(detector).visitClassContext(argThat(isClassContextFor("DetectorRunner")));
 	}
 
 	@Test public void runDetector2OnClassVisitsDetectorWithClassContextOfSpecifiedClass() throws Exception {
-		Detector2 detector = mock(Detector2.class);
-		BugReporter bugReporter = TestingBugReporter.tddBugReporter();
+		new DetectorRunner().runDetectorOnClass(detector2, DetectorRunner.class, bugReporter);
 
-		DetectorRunner.runDetectorOnClass(detector, DetectorRunner.class, bugReporter);
-
-		verify(detector).visitClass(argThat(isClassDescriptorFor("DetectorRunner")));
+		verify(detector2).visitClass(argThat(isClassDescriptorFor("DetectorRunner")));
 	}
+	
 
 	public static ArgumentMatcher<ClassContext> isClassContextFor(final String simpleClassName) {
 		return new ArgumentMatcher<ClassContext>() {
@@ -77,8 +76,10 @@ public class DetectorRunnerTest {
 					return ((ClassDescriptor) argument).getSimpleName().equals(simpleClassName);
 				}
 			}
-
 		};
 	}
+	
+
+
 }
 
