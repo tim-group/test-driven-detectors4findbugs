@@ -92,6 +92,9 @@ class TestingBugReporter {
             return sortedBugCollection;
         }
         
+        /**
+         * Required to compile against certain versions of FindBugs (2.0.0+).
+         */
         @SuppressWarnings("unused")
         public BugReporter getRealBugReporter() { return null; }
 
