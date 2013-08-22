@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.youdevise</groupId>
 	<artifactId>test-driven-detectors4findbugs</artifactId>
-	<version>0.2.2-SNAPSHOT</version>
+	<version>1.0</version>
 
 	<packaging>jar</packaging>
 	<name>test-driven-detectors4findbugs</name>
