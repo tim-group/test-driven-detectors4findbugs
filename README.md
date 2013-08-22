@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/youdevise/test-driven-detectors4findbugs.png)](https://travis-ci.org/youdevise/test-driven-detectors4findbugs)
 
-Utility for test driving development of [FindBugs](http://findbugs.sourceforge.net/) plugins. Allows writing unit tests which run your custom detector against a given class, and assert on bugs, if any, reported by the detector. Copyright 2010 [youDevise, Ltd.](http://www.youdevise.com).
+Utility for test driving development of [FindBugs](http://findbugs.sourceforge.net/) plugins. Allows writing unit tests which run your custom detector against a given class, and assert on bugs, if any, reported by the detector.
 
 # Installation #
 
@@ -108,7 +108,7 @@ Run 'mvn package' to build the JAR.
 
 # License #
 
-Open source under the very permissive [MIT license](https://github.com/youdevise/test-driven-detectors4findbugs/blob/master/LICENSE).
+Open source under the very permissive [MIT license](https://github.com/youdevise/test-driven-detectors4findbugs/blob/master/LICENSE). Copyright 2010 [youDevise, Ltd.](http://www.youdevise.com).
 
 # Acknowledgements #
 
