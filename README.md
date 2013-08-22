@@ -6,7 +6,7 @@ Utility for test driving development of [FindBugs](http://findbugs.sourceforge.n
 
 # Installation #
 
-Add the JAR (available from the Downloads section) as a dependency for use in unit tests. The dependency can also be listed in Maven compatible build tools with the following information:
+Add test-driven-detectors4findbugs as a dependency for use in unit tests. The dependency can be downloaded [directly](http://repo.maven.apache.org/maven2/com/youdevise/test-driven-detectors4findbugs/1.0/test-driven-detectors4findbugs-1.0.jar), or listed in Maven-compatible build tools with the following information:
 
 <table>
     <tr>
@@ -18,18 +18,15 @@ Add the JAR (available from the Downloads section) as a dependency for use in un
     <tr>
         <td>com.youdevise</td>
         <td>test-driven-detectors4findbugs</td>
-        <td>0.2.1</td>
+        <td>1.0</td>
         <td>test</td>
     </tr>
 </table>
 
+(it may take a little while to sync to Maven Central, revert to version 0.2.1 if necessary)
 
+test-driven-detectors4findbugs depends on [Hamcrest](http://code.google.com/p/hamcrest/) 1.1+, and FindBugs 1.3.9 to 2.0.2. Custom detectors developed against 1.3.9 will work with 2.0+ versions of FindBugs, despite differences in the detector API.
 
-test-driven-detectors4findbugs depends on [Hamcrest](http://code.google.com/p/hamcrest/) 1.1+, and FindBugs 1.3.9.
-
-Dependency on 1.3.9 version of FindBugs is only for testing, custom detectors which pass tests with 1.3.9 have been verified to work from version 1.3.7 of FindBugs.
-
-As of the next release, FindBugs releases earlier than 1.3.9 will not be supported. Support will range from 1.3.9 to the latest stable release of the 2.x branch.
 
 # How To Use
 
