@@ -3,7 +3,7 @@ package com.youdevise.fbplugins.tdd4fb;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionContaining.hasItem;
+import static org.hamcrest.Matchers.hasItem;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ public class AuxCodeBaseLocatorProviderTest {
 	private final AuxCodeBaseLocatorProvider provider = new AuxCodeBaseLocatorProvider();
 
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void createsFileSystemCodeBaseLocatorForEachJarPathGiven() throws Exception {
 		Iterable<String> auxilliaryCodeBasePaths = 
