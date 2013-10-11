@@ -19,13 +19,12 @@
 package com.youdevise.fbplugins.tdd4fb;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 
 import java.util.Collection;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.StringDescription;
 
 import com.youdevise.fbplugins.tdd4fb.TestingBugReporter.TddBugReporter;
@@ -47,13 +46,13 @@ class BugsReportedAsserter {
 
 	public void assertBugReported(BugReporter bugReporter, Matcher<BugInstance> matches) {
 		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
-		assertThat(bugsReported, hasItem(matches));
+		assertThat(bugsReported, Matchers.<BugInstance>hasItem(matches));
 	}
 
 	public void assertAllBugsReported(BugReporter bugReporter, Matcher<BugInstance>... matches) {
 		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
 		assertThat("Expected a certain number of bugs to be reported.", bugsReported.size(), is(matches.length));
-		assertThat(bugsReported, hasItems(matches));
+		assertThat(bugsReported, Matchers.<BugInstance>hasItems(matches));
 	}
 
 	private Collection<BugInstance> bugsFrom(BugReporter bugReporter) {
