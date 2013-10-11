@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
@@ -29,9 +30,9 @@ public class AuxCodeBaseLocatorProviderTest {
 										  "path/to/mySecondJar.jar",
 										  "path/to/myDirectory/"));
 		Iterable<ICodeBaseLocator> codeBases = provider.get(auxilliaryCodeBasePaths);
-		assertThat(codeBases, allOf(hasItem(auxilliaryCodeBaseFor("path/to/myFirstJar.jar")),
-									hasItem(auxilliaryCodeBaseFor("path/to/mySecondJar.jar")),
-									hasItem(auxilliaryCodeBaseFor("path/to/myDirectory"))));
+		assertThat(codeBases, allOf(Matchers.<ICodeBaseLocator>hasItem(auxilliaryCodeBaseFor("path/to/myFirstJar.jar")),
+		                            Matchers.<ICodeBaseLocator>hasItem(auxilliaryCodeBaseFor("path/to/mySecondJar.jar")),
+		                            Matchers.<ICodeBaseLocator>hasItem(auxilliaryCodeBaseFor("path/to/myDirectory"))));
 	}
 	
 	private Iterable<String> convertToFilePaths(Iterable<String> paths) {
