@@ -52,7 +52,7 @@ public class DetectorAssert {
                                          Detector detector,
                                          BugReporter bugReporter,
                                          Matcher<BugInstance> bugInstanceMatcher) throws Exception {
-        assertBugReported(classToTest, adapt(detector), bugReporter);
+        assertBugReported(classToTest, adapt(detector), bugReporter, bugInstanceMatcher);
     }
 
     public static void assertBugReported(Class<?> classToTest,
