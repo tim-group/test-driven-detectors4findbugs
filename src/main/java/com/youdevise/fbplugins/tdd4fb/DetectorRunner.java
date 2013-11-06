@@ -27,7 +27,13 @@ import static java.lang.System.getProperty;
 import static java.util.Arrays.asList;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import edu.umd.cs.findbugs.BugReporter;
@@ -39,7 +45,11 @@ import edu.umd.cs.findbugs.Priorities;
 import edu.umd.cs.findbugs.ba.AnalysisCacheToAnalysisContextAdapter;
 import edu.umd.cs.findbugs.ba.AnalysisContext;
 import edu.umd.cs.findbugs.ba.FieldSummary;
+import edu.umd.cs.findbugs.ba.XClass;
+import edu.umd.cs.findbugs.ba.XFactory;
+import edu.umd.cs.findbugs.classfile.CheckedAnalysisException;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
+import edu.umd.cs.findbugs.classfile.DescriptorFactory;
 import edu.umd.cs.findbugs.classfile.Global;
 import edu.umd.cs.findbugs.classfile.IAnalysisCache;
 import edu.umd.cs.findbugs.classfile.IAnalysisEngineRegistrar;
@@ -48,6 +58,7 @@ import edu.umd.cs.findbugs.classfile.IClassPathBuilder;
 import edu.umd.cs.findbugs.classfile.IClassPathBuilderProgress;
 import edu.umd.cs.findbugs.classfile.ICodeBase;
 import edu.umd.cs.findbugs.classfile.ICodeBaseLocator;
+import edu.umd.cs.findbugs.classfile.MissingClassException;
 import edu.umd.cs.findbugs.classfile.engine.bcel.ClassContextClassAnalysisEngine;
 import edu.umd.cs.findbugs.classfile.impl.ClassFactory;
 import edu.umd.cs.findbugs.classfile.impl.ClassPathImpl;
@@ -105,6 +116,9 @@ class DetectorRunner {
             AnalysisContext.setCurrentAnalysisContext(analysisContext);
             analysisContext.setAppClassList(appClassList);
             analysisContext.setFieldSummary(new FieldSummary());
+            
+            Collection<ClassDescriptor> buildReferencedClassSet = buildReferencedClassSet(appClassList);
+            internXClasses(buildReferencedClassSet);
         }
 
         private static void registerUserDefined(IAnalysisCache analysisCache) {
@@ -124,11 +138,119 @@ class DetectorRunner {
         private static Iterable<String> classPathEntries() {
             return asList(getProperty("java.class.path").split(File.pathSeparator));
         }
+        
+        private static Collection<ClassDescriptor> buildReferencedClassSet(List<ClassDescriptor> appClassList) throws CheckedAnalysisException, InterruptedException {
+            Set<String> referencedPackageSet = new HashSet<String>();
+
+            LinkedList<ClassDescriptor> workList = new LinkedList<ClassDescriptor>();
+            workList.addAll(appClassList);
+
+            Set<ClassDescriptor> seen = new HashSet<ClassDescriptor>();
+            Set<ClassDescriptor> appClassSet = new HashSet<ClassDescriptor>(appClassList);
+
+            Set<ReferencedClassException> badAppClassExceptions = new HashSet<ReferencedClassException>();
+            Set<ClassDescriptor> badAppClasses = new HashSet<ClassDescriptor>();
+            Set<ClassDescriptor> addedToWorkList = new HashSet<ClassDescriptor>(appClassList);
+
+            while (!workList.isEmpty()) {
+                if (Thread.interrupted()) {
+                    throw new InterruptedException();
+                }
+                ClassDescriptor classDesc = workList.removeFirst();
+
+                if (seen.contains(classDesc)) {
+                    continue;
+                }
+                seen.add(classDesc);
+
+                referencedPackageSet.add(classDesc.getPackageName());
+
+                // Get list of referenced classes and add them to set.
+                // Add superclasses and superinterfaces to worklist.
+                try {
+                    XClass classNameAndInfo = Global.getAnalysisCache().getClassAnalysis(XClass.class, classDesc);
+
+                    ClassDescriptor superclassDescriptor = classNameAndInfo.getSuperclassDescriptor();
+                    if (superclassDescriptor != null && addedToWorkList.add(superclassDescriptor)) {
+                        workList.addLast(superclassDescriptor);
+                    }
+
+                    for (ClassDescriptor ifaceDesc : classNameAndInfo.getInterfaceDescriptorList()) {
+                        if (addedToWorkList.add(ifaceDesc))
+                            workList.addLast(ifaceDesc);
+                    }
+
+                    ClassDescriptor enclosingClass = classNameAndInfo.getImmediateEnclosingClass();
+                    if (enclosingClass != null && addedToWorkList.add(enclosingClass))
+                        workList.addLast(enclosingClass);
+
+                } catch (RuntimeException e) {
+                    if (appClassSet.contains(classDesc)) {
+                        badAppClasses.add(classDesc);
+                        badAppClassExceptions.add(new ReferencedClassException(classDesc, e));
+                    }
+                } catch (MissingClassException e) {
+                    if (appClassSet.contains(classDesc)) {
+                        badAppClasses.add(classDesc);
+                        badAppClassExceptions.add(new ReferencedClassException(classDesc, e));
+                    }
+                } catch (CheckedAnalysisException e) {
+                    if (appClassSet.contains(classDesc)) {
+                        badAppClasses.add(classDesc);
+                        badAppClassExceptions.add(new ReferencedClassException(classDesc, e));
+                    }
+                }
+            }
+            
+            if (!badAppClassExceptions.isEmpty()) {
+                for (ReferencedClassException exception : badAppClassExceptions) {
+                    exception.printStackTrace();
+                }
+                throw new RuntimeException("Error scanning classes. See System.err for details.");
+            }
+            
+            appClassList.removeAll(badAppClasses);
+            DescriptorFactory.instance().purge(badAppClasses);
+
+            for (ClassDescriptor d : DescriptorFactory.instance().getAllClassDescriptors()) {
+                referencedPackageSet.add(d.getPackageName());
+            }
+            return new ArrayList<ClassDescriptor>(DescriptorFactory.instance().getAllClassDescriptors());
+        }
+        
+        private static void internXClasses(Collection<ClassDescriptor> referencedClassSet) throws InterruptedException {
+            AnalysisContext.currentXFactory().canonicalizeAll();
+            XFactory factory = AnalysisContext.currentXFactory();
+            Collection<ClassDescriptor> badClasses = new LinkedList<ClassDescriptor>();
+            for (ClassDescriptor desc : referencedClassSet) {
+                try {
+                    XClass info = Global.getAnalysisCache().getClassAnalysis(XClass.class, desc);
+                    factory.intern(info);
+                } catch (CheckedAnalysisException e) {
+                    AnalysisContext.logError("Couldn't get class info for " + desc, e);
+                    badClasses.add(desc);
+                } catch (RuntimeException e) {
+                    AnalysisContext.logError("Couldn't get class info for " + desc, e);
+                    badClasses.add(desc);
+                }
+            }
+            if (!badClasses.isEmpty()) {
+                referencedClassSet = new LinkedHashSet<ClassDescriptor>(referencedClassSet);
+                referencedClassSet.removeAll(badClasses);
+            }
+        }
+
 
         private static void doRunDetectorOnClass(Detector2 pluginDetector, Class<?> classToTest, BugReporter bugReporter) throws Exception {
             String dottedClassName = classToTest.getName();
             ClassDescriptor classDescriptor = createClassDescriptorFromDottedClassName(dottedClassName);
             pluginDetector.visitClass(classDescriptor);
+        }
+    }
+    
+    private static class ReferencedClassException extends RuntimeException {
+        public ReferencedClassException(ClassDescriptor classDesc, Throwable cause) {
+            super("Error scanning the following class: " + classDesc, cause);
         }
     }
     
