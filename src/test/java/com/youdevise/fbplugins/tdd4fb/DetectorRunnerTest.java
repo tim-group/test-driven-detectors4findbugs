@@ -19,11 +19,17 @@
 package com.youdevise.fbplugins.tdd4fb;
 
 import static com.youdevise.fbplugins.tdd4fb.TestingBugReporter.tddBugReporter;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
@@ -31,7 +37,12 @@ import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;
 import edu.umd.cs.findbugs.Detector2;
 import edu.umd.cs.findbugs.ba.ClassContext;
+import edu.umd.cs.findbugs.ba.XClass;
+import edu.umd.cs.findbugs.ba.XFactory;
+import edu.umd.cs.findbugs.ba.XMethod;
 import edu.umd.cs.findbugs.classfile.ClassDescriptor;
+import edu.umd.cs.findbugs.classfile.DescriptorFactory;
+import edu.umd.cs.findbugs.classfile.MethodDescriptor;
 
 
 public class DetectorRunnerTest {
@@ -79,7 +90,35 @@ public class DetectorRunnerTest {
 		};
 	}
 	
+    @Ignore @Test 
+    public void canRetrieveXClassInfoForAnApplicationClass() throws Exception {
+        BugReporter bugReporter = DetectorAssert.bugReporterForTesting();
+        MyDetector myDetector = new MyDetector();
+        DetectorAssert.assertNoBugsReported(SomeClassOfMine.class, myDetector, bugReporter);
+        
+        assertThat(myDetector.xMethod.getClass().getSimpleName(), is(not("UnresolvedXMethod")));
+    }
+    
+    public static class SomeClassOfMine {
+        public synchronized void aMethod() {}
+    }
+    
+    public static final class MyDetector implements Detector {
 
+        private XMethod xMethod;
+
+        public void report() { }
+
+        public void visitClassContext(ClassContext classContext) {
+            xMethod = XFactory.createXMethod(DescriptorFactory.instance().getMethodDescriptor(
+                "com/youdevise/fbplugins/tdd4fb/DetectorRunnerTest$SomeClassOfMine", 
+                "aMethod", 
+                "()V;", 
+                false));
+        }
+
+
+    }
 
 }
 
