@@ -6,10 +6,5 @@ env:
   matrix:
     - FB_VERSION=1
     - FB_VERSION=2
-before_install:
-  - git clone https://github.com/gleclaire/findbugs-2.0.2.git /tmp/fb-2.0.2
-  - cd /tmp/fb-2.0.2
-  - mvn install -Dmaven.test.skip
-  - cd -
 script: "mvn clean install -P build-with-findbugs-v${FB_VERSION}"
 
