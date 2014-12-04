@@ -108,10 +108,9 @@ Run 'mvn package' to build the JAR.
 
 # License #
 
-Open source under the very permissive [MIT license](https://github.com/youdevise/test-driven-detectors4findbugs/blob/master/LICENSE). Copyright 2010 [youDevise, Ltd.](http://www.youdevise.com).
+Open source under the very permissive [MIT license](https://github.com/tim-group/test-driven-detectors4findbugs/blob/master/LICENSE). Copyright 2010 [TIM Group](https://www.timgroup.com).
 
 # Acknowledgements #
 
-A project of [youDevise](https://dev.youdevise.com). We're [hiring](http://www.youdevise.com/careers)!
-
+A project of [youDevise](https://devblog.timgroup.com/).
 
