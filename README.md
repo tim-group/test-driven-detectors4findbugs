@@ -1,6 +1,6 @@
 # Test Driven Detectors 4 FindBugs #
 
-[![Build Status](https://travis-ci.org/youdevise/test-driven-detectors4findbugs.png)](https://travis-ci.org/youdevise/test-driven-detectors4findbugs)
+[![Build Status](https://travis-ci.org/tim-group/test-driven-detectors4findbugs.png)](https://travis-ci.org/tim-group/test-driven-detectors4findbugs)
 
 Utility for test driving development of [FindBugs](http://findbugs.sourceforge.net/) plugins. Allows writing unit tests which run your custom detector against a given class, and assert on bugs, if any, reported by the detector.
 
