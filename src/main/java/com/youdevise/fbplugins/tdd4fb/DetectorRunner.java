@@ -73,7 +73,7 @@ class DetectorRunner {
         static final AuxCodeBaseLocatorProvider AUX_CODEBASE_LOCATOR_PROVIDER = new AuxCodeBaseLocatorProvider();
         static final BugReporter STATIC_BUG_REPORTER = TestingBugReporter.tddBugReporter();
         static final InitialisationResult INITIALISATION_RESULT = attemptSetup();
-       
+
         
         private static InitialisationResult attemptSetup() {
             try {
@@ -83,7 +83,7 @@ class DetectorRunner {
                 return new InitialisationResult(e);
             }
         }
-        
+
         private static void setUpStaticDependenciesWithinFindBugs(BugReporter bugReporter) throws Exception {
             bugReporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
             ClassPathImpl classPath = new ClassPathImpl();
