@@ -58,6 +58,12 @@
 				<findbugs.version>2.0.2</findbugs.version>
 			</properties>
 		</profile>
+        <profile>
+            <id>build-with-findbugs-v3</id>
+            <properties>
+				<findbugs.version>[3.0.0,4.0.0)</findbugs.version>
+            </properties>
+        </profile>
 	</profiles>
 	<build>
 		<plugins>
