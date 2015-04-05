@@ -63,6 +63,21 @@ public class DetectorAssert {
         asserter.assertBugReported(bugReporter, bugInstanceMatcher);
     }
 
+    public static void assertBugsReported(Class<?> classToTest,
+                                          Detector detector,
+                                          BugReporter bugReporter,
+                                          Matcher<Iterable<Object>> iterableMatcher) throws Exception {
+        assertBugsReported(classToTest, adapt(detector), bugReporter, iterableMatcher);
+    }
+
+    public static void assertBugsReported(Class<?> classToTest,
+                                          Detector2 detector,
+                                          BugReporter bugReporter,
+                                          Matcher<Iterable<Object>> iterableMatcher) throws Exception {
+        detectorRunner.runDetectorOnClass(detector, classToTest, bugReporter);
+        asserter.assertBugsReported(bugReporter, iterableMatcher);
+    }
+
     public static void assertAllBugsReported(Class<?> classToTest,
                                              Detector detector,
                                              BugReporter bugReporter,
