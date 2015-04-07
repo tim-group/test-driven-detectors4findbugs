@@ -35,6 +35,10 @@ import edu.umd.cs.findbugs.BugInstance;
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Priorities;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.iterableWithSize;
+
 public class DetectorAssertTest {
 	
 	private BugReporter bugReporter;
@@ -65,7 +69,13 @@ public class DetectorAssertTest {
 		bugReporter.reportBug(bugInstance);
 		asserter.assertBugReported(bugReporter);
 	}
-	
+
+	@Test public void
+	assertBugsReportedPassesTestWhenAnyBugIsReported() {
+		bugReporter.reportBug(bugInstance);
+		asserter.assertBugsReported(bugReporter, allOf(iterableWithSize(greaterThan(0))));
+	}
+
 	@Test(expected=AssertionError.class) public void
 	assertBugReportedFailsTestWhenNoBugIsReported() {
 		 // don't report a bug

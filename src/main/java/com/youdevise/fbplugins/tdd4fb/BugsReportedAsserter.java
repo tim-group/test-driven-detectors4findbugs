@@ -20,6 +20,7 @@ package com.youdevise.fbplugins.tdd4fb;
 
 import static org.hamcrest.CoreMatchers.is;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.hamcrest.Description;
@@ -47,6 +48,12 @@ class BugsReportedAsserter {
 	public void assertBugReported(BugReporter bugReporter, Matcher<BugInstance> matches) {
 		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
 		assertThat(bugsReported, Matchers.<BugInstance>hasItem(matches));
+	}
+
+	public void assertBugsReported(BugReporter bugReporter, Matcher<Iterable<Object>> listMatcher) {
+		Collection<BugInstance> bugsReported = bugsFrom(bugReporter);
+		Iterable<Object> i = Arrays.asList(bugsReported.toArray());
+		assertThat(i, listMatcher);
 	}
 
 	public void assertAllBugsReported(BugReporter bugReporter, Matcher<BugInstance>... matches) {
