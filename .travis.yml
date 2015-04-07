@@ -4,7 +4,6 @@ jdk:
   - openjdk7
 env:
   matrix:
-    - FB_VERSION=1
-    - FB_VERSION=2
+    - FB_VERSION=3
 script: "mvn clean install -P build-with-findbugs-v${FB_VERSION}"
 

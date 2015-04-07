@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.Detector2;
 import edu.umd.cs.findbugs.DetectorToDetector2Adapter;
 import edu.umd.cs.findbugs.NoOpFindBugsProgress;
 import edu.umd.cs.findbugs.Priorities;
-import edu.umd.cs.findbugs.ba.AnalysisCacheToAnalysisContextAdapter;
+import edu.umd.cs.findbugs.Project;
 import edu.umd.cs.findbugs.ba.AnalysisContext;
 import edu.umd.cs.findbugs.ba.FieldSummary;
 import edu.umd.cs.findbugs.ba.XClass;
@@ -73,7 +73,7 @@ class DetectorRunner {
         static final AuxCodeBaseLocatorProvider AUX_CODEBASE_LOCATOR_PROVIDER = new AuxCodeBaseLocatorProvider();
         static final BugReporter STATIC_BUG_REPORTER = TestingBugReporter.tddBugReporter();
         static final InitialisationResult INITIALISATION_RESULT = attemptSetup();
-       
+
         
         private static InitialisationResult attemptSetup() {
             try {
@@ -83,7 +83,18 @@ class DetectorRunner {
                 return new InitialisationResult(e);
             }
         }
-        
+
+        /**
+         * Build a project instance.
+         *
+         * TODO: Any further initialization?
+         *
+         * @return A project instance.
+         */
+        private static Project buildProject() {
+            return new Project();
+        }
+
         private static void setUpStaticDependenciesWithinFindBugs(BugReporter bugReporter) throws Exception {
             bugReporter.setPriorityThreshold(Priorities.LOW_PRIORITY);
             ClassPathImpl classPath = new ClassPathImpl();
@@ -112,7 +123,9 @@ class DetectorRunner {
             builder.build(classPath, progress);
             List<ClassDescriptor> appClassList = builder.getAppClassList();
 
-            AnalysisCacheToAnalysisContextAdapter analysisContext = new AnalysisCacheToAnalysisContextAdapter();
+            Project project = buildProject();
+
+            AnalysisContext analysisContext = new AnalysisContext(project);
             AnalysisContext.setCurrentAnalysisContext(analysisContext);
             analysisContext.setAppClassList(appClassList);
             analysisContext.setFieldSummary(new FieldSummary());
