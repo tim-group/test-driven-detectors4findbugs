@@ -42,7 +42,7 @@ import edu.umd.cs.findbugs.Detector2;
 import edu.umd.cs.findbugs.DetectorToDetector2Adapter;
 import edu.umd.cs.findbugs.NoOpFindBugsProgress;
 import edu.umd.cs.findbugs.Priorities;
-import edu.umd.cs.findbugs.ba.AnalysisCacheToAnalysisContextAdapter;
+import edu.umd.cs.findbugs.Project;
 import edu.umd.cs.findbugs.ba.AnalysisContext;
 import edu.umd.cs.findbugs.ba.FieldSummary;
 import edu.umd.cs.findbugs.ba.XClass;
@@ -112,7 +112,7 @@ class DetectorRunner {
             builder.build(classPath, progress);
             List<ClassDescriptor> appClassList = builder.getAppClassList();
 
-            AnalysisCacheToAnalysisContextAdapter analysisContext = new AnalysisCacheToAnalysisContextAdapter();
+            AnalysisContext analysisContext = new AnalysisContext(new Project());
             AnalysisContext.setCurrentAnalysisContext(analysisContext);
             analysisContext.setAppClassList(appClassList);
             analysisContext.setFieldSummary(new FieldSummary());

@@ -18,21 +18,6 @@
 
 package com.youdevise.fbplugins.tdd4fb;
 
-import static com.youdevise.fbplugins.tdd4fb.TestingBugReporter.tddBugReporter;
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-import org.mockito.ArgumentMatcher;
-
 import edu.umd.cs.findbugs.BugReporter;
 import edu.umd.cs.findbugs.Detector;
 import edu.umd.cs.findbugs.Detector2;
@@ -46,6 +31,19 @@ import edu.umd.cs.findbugs.classfile.DescriptorFactory;
 import edu.umd.cs.findbugs.classfile.Global;
 import edu.umd.cs.findbugs.classfile.analysis.ClassInfo;
 import edu.umd.cs.findbugs.classfile.analysis.MethodInfo;
+import org.junit.Test;
+import org.mockito.ArgumentMatcher;
+
+import static com.youdevise.fbplugins.tdd4fb.TestingBugReporter.tddBugReporter;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 
 public class DetectorRunnerTest {
@@ -81,7 +79,7 @@ public class DetectorRunnerTest {
 		};
 	}
 
-	private Matcher<ClassDescriptor> isClassDescriptorFor(final String simpleClassName) {
+	private ArgumentMatcher<ClassDescriptor> isClassDescriptorFor(final String simpleClassName) {
 		return new ArgumentMatcher<ClassDescriptor>() {
 			@Override public boolean matches(Object argument) {
 				if (!(argument instanceof ClassDescriptor)) {
