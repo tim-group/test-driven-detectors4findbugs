@@ -68,12 +68,9 @@ public class DetectorRunnerTest {
 
 	public static ArgumentMatcher<ClassContext> isClassContextFor(final String simpleClassName) {
 		return new ArgumentMatcher<ClassContext>() {
-			@Override public boolean matches(Object argument) {
-				if (!(argument instanceof ClassContext)) {
-					return false;
-				} else {
-					return ((ClassContext) argument).getClassDescriptor().getSimpleName().equals(simpleClassName);
-				}
+			@Override
+            public boolean matches(ClassContext argument) {
+                return argument.getClassDescriptor().getSimpleName().equals(simpleClassName);
 			}
 
 		};
@@ -81,12 +78,8 @@ public class DetectorRunnerTest {
 
 	private ArgumentMatcher<ClassDescriptor> isClassDescriptorFor(final String simpleClassName) {
 		return new ArgumentMatcher<ClassDescriptor>() {
-			@Override public boolean matches(Object argument) {
-				if (!(argument instanceof ClassDescriptor)) {
-					return false;
-				} else {
-					return ((ClassDescriptor) argument).getSimpleName().equals(simpleClassName);
-				}
+			@Override public boolean matches(ClassDescriptor argument) {
+                return argument.getSimpleName().equals(simpleClassName);
 			}
 		};
 	}
