@@ -43,7 +43,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<findbugs.version>[1.3.9, 3.0.3]</findbugs.version>
+				<findbugs.version>[1.3.9,4.0.0)</findbugs.version>
 			</properties>
 		</profile>
 		<profile>
@@ -58,6 +58,12 @@
 				<findbugs.version>2.0.2</findbugs.version>
 			</properties>
 		</profile>
+        <profile>
+            <id>build-with-findbugs-v3</id>
+            <properties>
+				<findbugs.version>[3.0.0,4.0.0)</findbugs.version>
+            </properties>
+        </profile>
 	</profiles>
 	<build>
 		<plugins>
